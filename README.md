@@ -1,6 +1,12 @@
 # Description
 
-# Topology
+In this repository you can find the initial steps to run Tofino Switch (in model type of execution), connecting two hosts (h1 and h2). We implement the IPv4 forwarding based on Longest Prefix Match. 
+
+Our setup is based on linux namespaces, running entirely in a Ubuntu (22.04) VM. The version of SDE used is 9.10.0.
+
+You can find *.p4 files in "tna_ipv4_lpm" directory.
+
+## Topology
 
 	h1(veth0) <--> (veth1:1)TofinoSW(veth3:2) <--> (veth2)h2  
 
@@ -34,17 +40,17 @@
 ### Tofino
 #### Compile P4 code 
 	$ cd $SDE/tools
-	$./p4build -p /path-to-p4-code/code.p4 --with-tofino
+	$./p4build -p /path-to-p4-code/tna_ipv4_lpm/tna_ipv4_lpm.p4 --with-tofino
 
 	//The p4_build script will create two folders(build-dir and log-dir).
 
 	$SDE/
-	    |-build/p4-build/tofino/code/
-	    |-logs/p4-build/tofino/code/
+	    |-build/p4-build/tofino/tna_ipv4_lpm/
+	    |-logs/p4-build/tofino/tna_ipv4_lpm/
 	    
 #### Port map (create a file to mapping the veth in tofino ports)
 	
-	$ cd /path-to-p4-code/
+	$ cd /path-to-p4-code/tna_ipv4_lpm/
 	$ > ports.json \\Create a port map file. 
 
 	Insert the content in the file
@@ -57,12 +63,12 @@
 	}
 
 #### Run Tofino (Model)
-	$ mkdir /path-to-code/logs \\Create a log directory
+	$ mkdir /path-to-code/tna_ipv4_lpm/logs \\Create a log directory
 	$ cd $SDE
-	$ ./run_tofino_model.sh -p code -f /path-to-p4-code/portmapping.json --log-dir $SDE/path-to-p4-code/logs/
+	$ ./run_tofino_model.sh -p tna_ipv4_lpm -f /path-to-p4-code/tna_ipv4_lpm/portmapping.json --log-dir $SDE/path-to-p4-code/tna_ipv4_lpm/logs/
 	
 #### Run switch daemon (switchd)
-	$ ./run_switchd.sh -p code
+	$ ./run_switchd.sh -p tna_ipv4_lpm
 	bfshell> bfrt_python
 	[1] bfrt.code.pipe.SwitchIngress.ipv4_lpm
 	bfrt.code.pipe.SwitchIngress.ipv4_lpm> add_with_ipv4_forward(dst_addr='172.16.0.1', dst_addr_p_length=32, dst_mac_addr='XX:XX:XX:XX:XX:XX', dst_port=1)
@@ -71,21 +77,14 @@
 #### Test connectivity
 
 	h1
-    ```
 	# ping 172.16.0.2
-	```
 	
     h2
-    ```
 	# ping 172.16.0.1
-	```
 
 	Tofino
-	\\See the log files created in $SDE/path-to-p4-code/logs/
-	Eg.: 
-    ```
-    $ tail -f model_20221012_132707.log
-    ```
+	\\See the log files created in $SDE/path-to-p4-code/tna_ipv4_lpm/logs/
+	Eg.: $ tail -f model_20221012_132707.log
 
 
 

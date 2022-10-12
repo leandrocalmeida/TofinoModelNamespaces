@@ -8,7 +8,7 @@ You can find *.p4 files in "tna_ipv4_lpm" directory.
 
 ## Topology
 
-	h1(veth0) <--> (veth1:1)TofinoSW(veth3:2) <--> (veth2)h2  
+![alt_text](https://github.com/leandrocalmeida/TofinoModelNamespaces/blob/main/img/topo.jpg)
 
 ### Create Namespaces
 	$ sudo ip netns add h1 \\Create a h1 namespace

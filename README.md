@@ -8,14 +8,14 @@ You can find *.p4 files in "tna_ipv4_lpm" directory.
 
 ## Topology
 
-![alt_text](https://github.com/leandrocalmeida/TofinoModelNamespaces/blob/main/img/topo.jpg)
+![Topology](https://github.com/leandrocalmeida/TofinoModelNamespaces/blob/main/img/topo.jpg)
 
 ### Create Namespaces
 	$ sudo ip netns add h1 \\Create a h1 namespace
 	$ sudo ip netns add h2 \\Create a h2 namespace
 
-	$ sudo ip add veth0 type veth peer name veth1 \\Create veth pair between h1-TofinoSW
-	$ sudo ip add veth2 type veth peer name veth3 \\Create veth pair between TofinoSW-h2
+	$ sudo ip link add veth0 type veth peer name veth1 \\Create veth pair between h1-TofinoSW
+	$ sudo ip link add veth2 type veth peer name veth3 \\Create veth pair between TofinoSW-h2
 
 	$ sudo ip link set veth0 netns h1 \\Attach veth0 to h1
 	$ sudo ip link set veth2 netns h2 \\Attach veth2 to h2
@@ -28,14 +28,14 @@ You can find *.p4 files in "tna_ipv4_lpm" directory.
 	$ sudo ip netns exec h1 bash \\Run bash in h1 namespace
 	# ip link set veth0 up \\Bring interface veth0 up
 	# ip address add 172.16.0.1/16 dev veth0 \\Assign IP address in h1
-	# arp -a 172.16.0.2 YY:YY:YY:YY:YY:YY \\Create a new arp entry for h2. Change YY:YY:YY:YY:YY:YY for h2 Mac address
+	# arp -s 172.16.0.2 YY:YY:YY:YY:YY:YY \\Create a new arp entry for h2. Change YY:YY:YY:YY:YY:YY for h2 Mac address
 
 ### Host2 (run in other terminal - tab 2)
 
 	$ sudo ip netns exec h2 bash \\Run bash in h2 namespace
 	# ip link set veth2 up \\Bring interface veth2 up
-	# ip address add 172.16.0.2/16 dev veth0 \\Assign IP address in h2
-	# arp -a 172.16.0.1 XX:XX:XX:XX:XX:XX \\Create a new arp entry for h1. Change XX:XX:XX:XX:XX:XX for h1 Mac address
+	# ip address add 172.16.0.2/16 dev veth2 \\Assign IP address in h2
+	# arp -s 172.16.0.1 XX:XX:XX:XX:XX:XX \\Create a new arp entry for h1. Change XX:XX:XX:XX:XX:XX for h1 Mac address
 
 ### Tofino
 #### Compile P4 code 
@@ -88,3 +88,6 @@ You can find *.p4 files in "tna_ipv4_lpm" directory.
 
 
 
+
+
+[def]: /img/topo.jpg
